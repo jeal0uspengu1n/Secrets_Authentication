@@ -31,7 +31,7 @@ app.use(passport.initialize());
 // Tell app to use passport for dealing with sessions.
 app.use(passport.session());
 
-mongoose.connect("mongodb://127.0.0.1:27017/userDB", {useNewUrlParser: true});
+mongoose.connect("mongodb+srv://groot:mnbvcxz@cluster0.qdemu.mongodb.net/userDB");
 
 
 
@@ -79,7 +79,7 @@ passport.deserializeUser(function(id, done) {
 passport.use(new GoogleStrategy({
     clientID:     process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "http://localhost:6969/auth/google/secrets",
+    callbackURL: "https://secrets-sharing-app.herokuapp.com/auth/google/secrets",
     passReqToCallback   : true
   },
   function(request, accessToken, refreshToken, profile, done) {
@@ -93,7 +93,7 @@ passport.use(new GoogleStrategy({
 passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost:6969/auth/facebook/secrets"
+    callbackURL: "https://secrets-sharing-app.herokuapp.com/auth/facebook/secrets"
   },
   function(accessToken, refreshToken, profile, cb) {
     // console.log(profile);
