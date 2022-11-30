@@ -31,9 +31,7 @@ app.use(passport.initialize());
 // Tell app to use passport for dealing with sessions.
 app.use(passport.session());
 
-mongoose.connect("mongodb+srv://groot:mnbvcxz@cluster0.qdemu.mongodb.net/userDB");
-
-
+mongoose.connect(process.env.MONGO_URL);
 
 
 const userSchema = new mongoose.Schema({
