@@ -9,6 +9,7 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const findOrCreate = require('mongoose-findorcreate');
+const BASE_URL = process.env.BASE_URL
 
 const app = express();
 
@@ -77,7 +78,7 @@ passport.deserializeUser(function(id, done) {
 passport.use(new GoogleStrategy({
     clientID:     process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "https://secrets-sharing-app.herokuapp.com/auth/google/secrets",
+    callbackURL: `${BASE_URL}/auth/google/secrets`,
     passReqToCallback   : true
   },
   function(request, accessToken, refreshToken, profile, done) {
@@ -91,7 +92,7 @@ passport.use(new GoogleStrategy({
 passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: "https://secrets-sharing-app.herokuapp.com/auth/facebook/secrets"
+    callbackURL: `${BASE_URL}/auth/facebook/secrets`
   },
   function(accessToken, refreshToken, profile, cb) {
     // console.log(profile);
@@ -102,7 +103,12 @@ passport.use(new FacebookStrategy({
 ));
 
 app.get('/', (req, res) => {
-    res.render("home");
+    if(req.isAuthenticated()) {
+        res.redirect('/secrets');
+    }
+    else {
+        res.render("home");
+    }
 });
 
 app.get('/auth/google', passport.authenticate('google', { scope: [ "profile" ] }));
@@ -131,7 +137,6 @@ app.get('/secrets', (req, res) => {
     let innerHTML = "Loading";
     let href = "/secrets";
 
-    // Fixed: Log Out button even if user is not logged in.
     if(req.isAuthenticated()){
         innerHTML = "Log Out";
         href = "/logout";
@@ -198,6 +203,6 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/login' })
     res.redirect('/secrets');
 });
 
-app.listen(process.env.PORT || 6969, function () {
+app.listen(process.env.PORT || 3000, function () {
     console.log("Server is started on port 3000");
 })
